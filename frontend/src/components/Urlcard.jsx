@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 
 export default function UrlCard({ link, onDelete }) {
   const [loading, setLoading] = useState(false);
@@ -12,24 +12,23 @@ export default function UrlCard({ link, onDelete }) {
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(shortUrl);
-      toast.success("Copied to clipboard!", { position: "top-right" });
+      toast.success("Copied to clipboard!");
     } catch {
-      toast.error("Copy failed", { position: "top-right" });
+      toast.error("Copy failed");
     }
   };
 
   const handleDelete = async () => {
     if (!onDelete) return;
     if (!window.confirm("Are you sure you want to delete this URL?")) return;
-
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/${link.shortId}`, { method: "DELETE" });
+      const res = await fetch(`${API_BASE}/${link.shortId}`, { method: "DELETE", credentials:"include" });
       if (!res.ok) throw new Error("Delete failed");
-      toast.success("URL deleted!", { position: "top-right" });
+      toast.success("URL deleted!");
       onDelete(link.shortId);
     } catch (err) {
-      toast.error(err.message, { position: "top-right" });
+      toast.error(err.message);
     } finally {
       setLoading(false);
     }
@@ -37,7 +36,6 @@ export default function UrlCard({ link, onDelete }) {
 
   return (
     <>
-      <Toaster /> {/* Toast container */}
       <div className="bg-white p-6 rounded-2xl shadow flex flex-col md:flex-row justify-between gap-6 w-full max-w-6xl mx-auto transition hover:shadow-xl">
         <div className="flex-1 min-w-0">
           <div className="text-sm text-gray-500">Original URL</div>

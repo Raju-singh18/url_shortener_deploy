@@ -4,6 +4,9 @@ import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Features from "./pages/Features";
+import Login from "./pages/login";
+import Signup from "./pages/signup";
+import { Toaster } from "react-hot-toast";
 
 export default function App() {
   return (
@@ -14,10 +17,15 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
-            <Route path="/features" element={<Features/>}/> 
+            <Route path="/features" element={<Features />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
           </Routes>
         </main>
+        <Toaster position="top-right" reverseOrder={false} />
       </div>
     </Router>
   );
 }
+
+ 

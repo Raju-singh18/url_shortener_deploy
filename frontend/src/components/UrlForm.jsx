@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { createShort } from "../utils/api";
+import toast from "react-hot-toast";
 
 export default function UrlForm({ onCreate }) {
   const [longUrl, setLongUrl] = useState("");
@@ -29,11 +30,11 @@ export default function UrlForm({ onCreate }) {
             },
         shortUrl
       );
-
+      toast.success("Short URL Created..!")
       setLongUrl("");
       setCustomAlias("");
     } catch (err) {
-      alert(err?.response?.data?.message || "Failed to create short URL");
+      toast.error(err?.response?.data?.message || "Failed to create short URL");
       console.error(err);
     } finally {
       setLoading(false);

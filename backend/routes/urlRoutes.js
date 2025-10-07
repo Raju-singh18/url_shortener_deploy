@@ -1,6 +1,6 @@
 // routes/urlRoutes.js
 const express = require("express");
-const { createShortUrl, getAllUrls,deleteUrl } = require("../controllers/urlController");
+const { createShortUrl, getAllUrls,deleteUrl} = require("../controllers/urlController");
 const auth =require("../middlewares/auth")
 
 const router = express.Router();

@@ -26,7 +26,7 @@ export default function Signup() {
       if (res.ok) {
         localStorage.setItem("user", JSON.stringify(data.user));
         toast.success("User registered successful!");
-        navigate("/");
+        navigate("/login");
       } else {
         toast.error(data.message);
       }

@@ -18,7 +18,7 @@ export default function Navbar() {
     try {
       // Call backend logout route to clear the cookie
       await axios.post(
-        "http://localhost:5000/api/auth/logout",
+        "https://shortly-x2lu.onrender.com/api/auth/logout",
         {},
         { withCredentials: true } // important to send cookies
       );
@@ -96,28 +96,6 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* Mobile Hamburger */}
-        {/* <div className="md:hidden">
-          <button
-            className="text-slate-700 focus:outline-none"
-            onClick={() => alert("Mobile menu placeholder")}
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
-          </button>
-        </div> */}
         <div className="md:hidden relative">
           <button
             onClick={() => setIsOpen(!isOpen)}

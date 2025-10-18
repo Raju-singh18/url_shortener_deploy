@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE || 'http://localhost:5000/api/url',
+  baseURL: import.meta.env.VITE_API_BASE || 'https://shortly-x2lu.onrender.com/api/url',
   withCredentials:true,
 });
 

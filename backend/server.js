@@ -48,7 +48,6 @@
 //     console.error("Mongo connection error:", err);
 //   });
 
-
 // backend/server.js
 const express = require("express");
 const mongoose = require("mongoose");
@@ -66,10 +65,7 @@ app.use(cookieParser());
 // CORS: allow local dev and deployed domain
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      process.env.BASE_URL || "https://shortly-x2lu.onrender.com"
-    ],
+    origin: "https://shortly-x2lu.onrender.com",
     credentials: true,
   })
 );
@@ -104,4 +100,3 @@ mongoose
     console.error("❌ MongoDB Connection Error:", err);
     process.exit(1);
   });
-

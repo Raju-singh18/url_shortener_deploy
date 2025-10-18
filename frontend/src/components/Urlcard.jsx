@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 export default function UrlCard({ link, onDelete }) {
   const [loading, setLoading] = useState(false);
 
-  const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:5000/api/url";
+  const API_BASE = import.meta.env.VITE_API_BASE || "https://shortly-x2lu.onrender.com/api/url";
   const shortUrl =
     link.shortUrl ||
     `${(API_BASE.replace(/\/+$/, "")).replace("/api/url", "")}/${link.shortId}`;

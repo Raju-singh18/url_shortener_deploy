@@ -8,43 +8,77 @@ exports.createShortUrl = async (req, res) => {
   try {
     const { longUrl, customAlias } = req.body;
 
-    if (!req.user) return res.status(401).json({ message: "Not authorized" });
-
-    const baseUrl = process.env.BASE_URL || `http://localhost:${process.env.PORT || 5000}`;
-
-    if (!longUrl || typeof longUrl !== "string")
-      return res.status(400).json({ message: "longUrl is required" });
-
-    if (!validUrl.isUri(longUrl))
-      return res.status(400).json({ message: "Invalid long URL" });
-
-    if (customAlias) {
-      const existsAlias = await Url.findOne({ shortId: customAlias });
-      if (existsAlias)
-        return res.status(400).json({ message: "Custom alias already used" });
-
-      const newUrl = new Url({ longUrl, shortId: customAlias, customAlias, user: req.user._id });
-      await newUrl.save();
-
-      return res.json({ shortUrl: `${baseUrl}/${newUrl.shortId}`, data: newUrl });
+    // ✅ Check if user is authenticated
+    if (!req.user) {
+      return res.status(401).json({ message: "Not authorized" });
     }
 
-    let urlDoc = await Url.findOne({ longUrl });
-    if (urlDoc)
-      return res.json({ shortUrl: `${baseUrl}/${urlDoc.shortId}`, data: urlDoc });
+    // ✅ Validate longUrl
+    if (!longUrl || typeof longUrl !== "string") {
+      return res.status(400).json({ message: "longUrl is required" });
+    }
 
+    if (!validUrl.isUri(longUrl)) {
+      return res.status(400).json({ message: "Invalid long URL" });
+    }
+
+    // ✅ Base URL for short links
+    const baseUrl =
+      process.env.BASE_URL ||
+      `http://localhost:${process.env.PORT || 5000}`;
+
+    // ✅ Handle custom alias
+    if (customAlias) {
+      const existsAlias = await Url.findOne({ shortId: customAlias });
+      if (existsAlias) {
+        return res.status(400).json({ message: "Custom alias already used" });
+      }
+
+      const newUrl = await Url.create({
+        longUrl,
+        shortId: customAlias,
+        customAlias,
+        user: req.user._id,
+      });
+
+      return res.status(201).json({
+        success: true,
+        shortUrl: `${baseUrl}/${newUrl.shortId}`,
+        data: newUrl,
+      });
+    }
+
+    // ✅ Prevent duplicate URLs for the same user
+    const existingUrl = await Url.findOne({ longUrl, user: req.user._id });
+    if (existingUrl) {
+      return res.status(200).json({
+        success: true,
+        shortUrl: `${baseUrl}/${existingUrl.shortId}`,
+        data: existingUrl,
+      });
+    }
+
+    // ✅ Generate unique shortId
     let shortId = generateShortId(6);
     let tries = 0;
     while (await Url.findOne({ shortId })) {
       shortId = generateShortId(6);
       tries++;
-      if (tries > 10) break;
+      if (tries > 10) break; // safety check
     }
 
-    const newUrl = new Url({ longUrl, shortId, user: req.user._id });
-    await newUrl.save();
+    // ✅ Create the new URL document
+    const newUrl = await Url.create({
+      longUrl,
+      shortId,
+      user: req.user._id,
+    });
 
-    return res.json({ shortUrl: `${baseUrl}/${shortId}`, data: newUrl });
+    return res.status(201).json({
+      success: true,
+      shortUrl: `${baseUrl}/${shortId}`,
+      data: newUrl,
+    });
   } catch (err) {
     console.error("createShortUrl error:", err);
     return res.status(500).json({ message: "Server error" });
@@ -54,8 +88,8 @@ exports.createShortUrl = async (req, res) => {
 
 exports.getAllUrls = async (req, res) => {
   try {
-    const urls = await Url.find().sort({ createdAt: -1 }).limit(200);
-    return res.json({ urls });
+    const urls = await Url.find({user:req.user._id}).sort({ createdAt: -1 }).limit(200);
+    return res.json({success:true, urls });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: "Server error" });
